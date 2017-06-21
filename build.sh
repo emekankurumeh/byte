@@ -18,7 +18,7 @@ while [[ "$#" ]]; do case $1 in
 		break
 	;;
     *)
-		CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
+		CFLAGS=" -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
 		TAG="[DEBUG]"
 		break
 	;;

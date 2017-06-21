@@ -11,7 +11,6 @@ State *state_new() {
   S->stack = calloc(STACK_SIZE, sizeof(Value*));
   S->stackSize = 0;
   // S->value = NULL;
-  memset()
   S->gc_count = 0;
   // printf("gc_count: %ld\n", S->gc_count);
   return S;
@@ -35,9 +34,6 @@ Value *state_pop(State *S) {
 
 
 Value *new_value(State *S, int type) {
-  printf("gc_count: %ld\n", S->gc_count);
-  printf("stack_size: %ld\n", S->stackSize);
-  printf("------------------------------\n");
   S->gc_count--;
   if (S->gc_count < 0) {
     gc_run(S);
@@ -92,10 +88,8 @@ void mark_value(Value *v) {
 
 void gc_sweep(State *S) {
   Value **v = &S->value;
-  long clean, dirty;
-  clean, dirty = 0;
+  long clean = 0, dirty = 0;
   while (*v) {
-    puts("sweeping");
     if (!(*v)->mark) {
       Value *unreached = *v;
       *v = unreached->next;
@@ -108,7 +102,7 @@ void gc_sweep(State *S) {
     }
   }
   S->gc_count = clean * 2;
-  // GCINFO(clean, dirty);
+  GCINFO(clean, dirty);
 }
 
 void gc_run(State *S) {
