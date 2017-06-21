@@ -10,9 +10,8 @@ State *state_new() {
   State *S = calloc(1, sizeof(State));
   S->stack = calloc(STACK_SIZE, sizeof(Value*));
   S->stackSize = 0;
-  // S->value = NULL;
+  S->value = NULL;
   S->gc_count = 0;
-  // printf("gc_count: %ld\n", S->gc_count);
   return S;
 }
 
@@ -113,17 +112,14 @@ void gc_run(State *S) {
 
 int main(void) {
   State *S = state_new();
-  // printf("gc_count: %ld\n", S->gc_count);
-  // new_string(S, "ho");
+  new_string(S, "HELLO");
   new_number(S, 2);
-  new_number(S, 2);
-  // printf("gc_count: %ld\n", S->gc_count);
   new_pair(S);
   new_number(S, 8);
   new_number(S, 19);
   new_pair(S);
   new_pair(S);
   Value *a = state_pop(S);
-  printf("[(%ld, %ld), (%ld, %ld)]\n", a->pair.head->pair.head->num.value, a->pair.head->pair.tail->num.value, a->pair.tail->pair.head->num.value, a->pair.tail->pair.tail->num.value);
+  printf("[(%ld, %ld), (%ld, %s)]\n", a->pair.head->pair.head->num.value, a->pair.head->pair.tail->num.value, a->pair.tail->pair.head->num.value, a->pair.tail->pair.tail->str.value);
   state_close(S);
 }
