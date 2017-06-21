@@ -1,0 +1,27 @@
+#ifndef STATE_H
+#define STATE_H
+
+#include "value.h"
+
+#define STACK_SIZE 1024
+
+// typedef struct State State;
+
+typedef struct State {
+  Value **stack;
+  size_t stackSize;
+  Value *value;
+  long gc_count;
+} State;
+
+State *state_new();
+void state_close(State *S);
+void state_push(State *S, Value *v);
+Value *state_pop(State *S);
+
+void gc_mark(State *S);
+void mark_value(Value *v);
+void gc_sweep(State *S);
+void gc_run(State *S);
+
+#endif

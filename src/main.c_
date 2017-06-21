@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+#include "state.h"
+#include "value"
+#include "gc.h"
+
+int main(void) {
+  State *S = new_state();
+  // new_string(S, "ho");
+  // new_number(S, 2);
+  // new_pair(S);
+  // new_number(S, 8);
+  // new_number(S, 19);
+  // new_pair(S);
+  // new_pair(S);
+  // Value *a = pop_state(S);
+  // printf("[(%ld, %ld), (%ld, %s)]\n", a->pair.head->pair.head->num.value, a->pair.head->pair.tail->num.value, a->pair.tail->pair.head->num.value, a->pair.tail->pair.tail->num.value);
+  close_state(S);
+}

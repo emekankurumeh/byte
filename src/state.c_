@@ -1,0 +1,57 @@
+#include <stddef.h>
+
+#include "state.h"
+#include "util.h"
+
+State *state_new() {
+  State *S = calloc(1, sizeof(State));
+  S->stack = calloc(STACK_SIZE, sizeof(Value*));
+  S->stackSize = 0;
+  S->value = NULL;
+  S->gc_count = 0;
+  return S;
+}
+
+void state_close(State *S) {
+  Value ** v = &S->value;
+  free(S);
+}
+
+void gc_mark(State *S) {
+  for (size_t i = 0; i < S->stackSize; i++) {
+    mark_value(S->stack[i]);
+  }
+}
+
+void mark_value(Value *v) {
+  if (v->mark) return;
+  v->mark = 1;
+  if (v->type == OBJ_PAIR) {
+    mark_value(v->pair.head);
+    mark_value(v->pair.tail);
+  }
+}
+
+void gc_sweep(State *S) {
+  Value ** v = &S->value;
+  long clean, dirty = 0;
+  while (*v) {
+    if (!(*v)->mark) {
+      Value *unreached = *v;
+      *v = unreached->next;
+      free(unreached);
+      dirty++;
+    } else {
+      (*v)->mark = 0;
+      v = &(*v)->next;
+      clean++;
+    }
+  }
+  S->gc_count = clean * 2;
+  GCINFO(clean, dirty);
+}
+
+void gc_run(State *S) {
+  gc_mark(S);
+  gc_sweep(S);
+}

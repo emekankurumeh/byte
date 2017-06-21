@@ -2,15 +2,33 @@
 
 OUTPUT=bin
 SOURCE=src
-BINARY=$OUTPUT/byte
-MAIN=vm.c
-CFLAGS="--std=c99 -Wall -Wextra -pedantic -O3 -L$OUTPUT -o $BINARY"
+MAIN=byte
+BINARY=$OUTPUT/$MAIN
 LFLAGS=""
 
-echo "initing..."
+while [[ "$#" ]]; do case $1 in
+    debug) 
+		CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
+		TAG="[DEBUG]"
+		break
+	;;
+    release) 
+		CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -O3 -L$OUTPUT -o $BINARY"
+		TAG="[RELEASE]"
+		break
+	;;
+    *)
+		CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
+		TAG="[DEBUG]"
+		break
+	;;
+  esac; shift; shift
+done
+
+echo "$TAG: initing..."
 rm -rf $OUTPUT && mkdir $OUTPUT
 
-echo "building..."
+echo "$TAG: building..."
 for F in $SOURCE/*/*.c
 	do
 		filename=$(basename $F)
@@ -25,13 +43,13 @@ for F in $OUTPUT/*.o
 		LFLAGS="$LFLAGS -l${filename/.o/}"
 	done
 
-echo "compiling..."
-gcc $CFLAGS $SOURCE/$MAIN $LFLAGS
+echo "$TAG: compiling..."
+gcc $CFLAGS $SOURCE/$MAIN.c $LFLAGS
 
-echo "stripping.."
+echo "$TAG: stripping.."
 strip $BINARY
 
-echo "clearing up..."
+echo "$TAG: cleaning up..."
 for F in $SOURCE/*/*.c
 	do
 		filename=$(basename $F)
@@ -39,4 +57,4 @@ for F in $SOURCE/*/*.c
 		rm -rf "$OUTPUT/lib${filename/.c/.a}"
 	done
 
-echo "done."
+echo "$TAG: done."
