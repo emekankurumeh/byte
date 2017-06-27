@@ -16,7 +16,8 @@ State *state_new() {
 }
 
 void state_close(State *S) {
-  Value ** v = &S->value;
+  gc_sweep(S);
+  gc_sweep(S);
   free(S);
 }
 
@@ -98,7 +99,7 @@ void gc_sweep(State *S) {
       (*v)->mark = 0;
       v = &(*v)->next;
       clean++;
-    }
+    }    
   }
   S->gc_count = clean * 2;
   GCINFO(clean, dirty);

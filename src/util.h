@@ -8,7 +8,7 @@
 
 #define assert(cond, ...) do { \
   if (!(cond)) { \
-    fprintf(stderr, "%sassertion failed:%s %s:%d: %s(): ", color_red, color_reset, __FILE__, __LINE__, __func__, #cond); \
+    fprintf(stderr, "[assertion failed]:%s %s:%d: %s(): ", #cond, __FILE__, __LINE__, __func__); \
   fprintf(stderr, __VA_ARGS__); \
   fprintf(stderr, "\n"); \
   abort(); \

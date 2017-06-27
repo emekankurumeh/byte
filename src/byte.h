@@ -24,7 +24,7 @@ struct State {
 struct Value {
   unsigned char type, mark;
   Value *next;
-  
+
   union {
     struct { long value;               } num;
     struct { char *value; size_t len;  } str;
