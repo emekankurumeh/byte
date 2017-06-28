@@ -8,17 +8,17 @@ LFLAGS=""
 
 while [[ "$#" ]]; do case $1 in
     debug)
-    CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
+    CFLAGS="--std=c99 -Wall -Wextra -pedantic -DDMT_STACK_TRACE -g -L$OUTPUT -o $BINARY"
     TAG="[DEBUG]"
   break
   ;;
     release)
-    CFLAGS="--std=c99 -Wall -Wextra -pedantic -DSP_STANDALONE -O3 -L$OUTPUT -o $BINARY"
+    CFLAGS="--std=c99 -Wall -Wextra -pedantic -DDMT_STACK_TRACE -O3 -L$OUTPUT -o $BINARY"
     TAG="[RELEASE]"
     break
   ;;
     *)
-    CFLAGS=" -Wall -Wextra -pedantic -DSP_STANDALONE -g -L$OUTPUT -o $BINARY"
+    CFLAGS=" -Wall -Wextra -pedantic -DDMT_STACK_TRACE -g -L$OUTPUT -o $BINARY"
     TAG="[DEBUG]"
     break
   ;;
