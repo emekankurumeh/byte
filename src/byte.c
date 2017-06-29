@@ -73,6 +73,7 @@ Value *new_value(State *S, int type) {
   /* if there are no values in the pool, create init a new chunk */
   if (!S->gc_pool) {
     size_t i;
+    // puts("kjhn");
     Chunk *c = zrealloc(NULL, sizeof(*c));
     c->next = S->gc_chunks;
     S->gc_chunks = c;
@@ -203,14 +204,20 @@ static void gc_run(State *S) {
 
 int main(void) {
   State *S = state_new();
+  // new_number(S, 56);
+  // new_number(S, 6763);
+  // state_pop(S);
   new_string(S, "HELLO");
   new_number(S, 2);
-  new_pair(S);
+  // new_pair(S);
+  // new_number(S, 8);
+  // new_number(S, 19);
+  // new_pair(S);
+  // new_pair(S);
+  Value *a = state_pop(S);
+  Value *b = state_pop(S);
   new_number(S, 8);
-  new_number(S, 19);
-  new_pair(S);
-  new_pair(S);
-  // Value *a = state_pop(S);
+  new_number(S, 8);
   // printf("[(ld, ld), (ld, %ld)]\n",a->pair.tail->pair.head->num.value);
   state_close(S);
 }
