@@ -52,6 +52,8 @@ struct Value {
     struct { char *value; size_t len;  } str;
     struct { Value *head, *tail;       } pair;
   }; /* tagged union of possible types and their contents */
+  /* pointer to next value in chunk */
+  Value *next;
 };
 
 struct Chunk {

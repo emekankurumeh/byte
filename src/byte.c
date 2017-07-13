@@ -81,14 +81,14 @@ Value *new_value(State *S, int type) {
     the currently-empty pool to  point at this list*/
     for (i = 0; i < CHUNK_LEN; i++) {
       c->values[i].type = VAL_TNIL;
-      c->values[i].pair.tail = (c->values + i + 1);
+      c->values[i].next = (c->values + i + 1);
     }
-    c->values[CHUNK_LEN - 1].pair.tail = NULL;
+    c->values[CHUNK_LEN - 1].next = NULL;
     S->gc_pool = c->values;
   }
   /* get a value from the pool */
   v = S->gc_pool;
-  S->gc_pool = v->pair.tail;
+  S->gc_pool = v->next;
 
   /* init the value */
   v->type = type;
@@ -135,7 +135,7 @@ static void gc_free(State *S, Value *v) {
       break;
   }
   v->type = VAL_TNIL;
-  v->pair.tail = S->gc_pool;
+  v->next = S->gc_pool;
   S->gc_pool = v;
 
 }
@@ -204,20 +204,8 @@ static void gc_run(State *S) {
 
 int main(void) {
   State *S = state_new();
-  // new_number(S, 56);
-  // new_number(S, 6763);
-  // state_pop(S);
-  new_string(S, "HELLO");
-  new_number(S, 2);
-  // new_pair(S);
-  // new_number(S, 8);
-  // new_number(S, 19);
-  // new_pair(S);
-  // new_pair(S);
-  Value *a = state_pop(S);
-  Value *b = state_pop(S);
   new_number(S, 8);
   new_number(S, 8);
-  // printf("[(ld, ld), (ld, %ld)]\n",a->pair.tail->pair.head->num.value);
+  printf("[(ld, ld), (ld, %ld)]\n", state_pop(S)->num.value);
   state_close(S);
 }
