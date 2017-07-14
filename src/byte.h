@@ -66,10 +66,11 @@ struct Program {
   vec_chptr_t inst; /* instructions to execute */
 };
 
-State *state_new(void);                         /* create a new state */
+State *state_new(void);                     /* create a new state */
 static void state_close(State *S);          /* close give state */
 static void state_push(State *S, Value *v); /* push a value in to the stack then add to current chunk */
 Value *state_pop(State *S);                 /* pop a value from the stack */
+static void state_show(State *S);           /* display the stack */
 
 void error_out(State *S, Value *err);
 void error_str(State *S, const char *fmt, ...);

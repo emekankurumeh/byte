@@ -63,6 +63,34 @@ static void state_close(State *S) {
   zfree(S, S);
 }
 
+/*
+├── build.sh
+├── example
+│   └── add.by
+├── old
+│   ├── opcode.h
+│   ├── vm.c
+│   └── vm.h
+└── src
+    ├── mpc
+    │   ├── mpc.c
+    │   ├── mpc.h
+    │   └── package.json
+    ├── util.h
+    ├── util.h.gch
+    └── vec
+        ├── package.json
+        ├── vec.c
+        └── vec.h
+*/
+static void state_show(State *S) {
+  puts("STATE");
+  size_t lim = S->gc_stack_idx;
+  for (size_t i = 0; i < lim; i++) {
+    printf("%zu %s\n", i, value_to_string(S, *(S->gc_stack + i)));
+  }
+}
+
 static void state_push(State *S, Value *v) {
   /* extend the stack's capacity if it has reached the cap */
   if (S->gc_stack_idx == S->gc_stack_cap) {
@@ -75,8 +103,10 @@ static void state_push(State *S, Value *v) {
 }
 
 Value *state_pop(State *S) {
-  ASSERT(S->gc_stack_idx > 0, "stack underflow");
-  return S->gc_stack[--S->gc_stack_idx];
+  ASSERT(S->gc_stack_idx >= 0, "stack underflow");
+  // S->gc_stack_idx = S->gc_stack_idx - 1;
+  // S->gc_stack_idx--;
+  return *(S->gc_stack + (--S->gc_stack_idx));
 }
 
 /*====================================================
@@ -277,7 +307,7 @@ static void gc_run(State *S) {
   }
   /* reset GC counter and output debug info */
   S->gc_count = clean;
-  GCINFO(clean, dirty);
+  // GCINFO(clean, dirty);
 }
 
 /*====================================================
@@ -286,20 +316,26 @@ static void gc_run(State *S) {
 
 int main(void) {
   State *S = state_new();
-  new_number(S, 000);
-  new_number(S, 001);
-  new_number(S, 010);
-  new_number(S, 011);
+  new_number(S, 1);
+  new_number(S, 10);
   new_number(S, 100);
-  new_number(S, 101);
-  new_number(S, 110);
-  new_number(S, 110);
-  state_pop(S);
-  state_pop(S);
-  state_pop(S);
-  new_number(S, 110);
-  new_number(S, 111);
-  new_pair(S, new_number(S, 000), new_number(S, 111));
-  puts(value_to_string(S, state_pop(S)));
+  new_number(S, 1000);
+  new_pair(S, new_number(S, 10000), new_pair(S, new_number(S, 100000), new_pair(S, new_string(S, "hello"), new_string(S, "world"))));
+  state_show(S);
+  // printf("start: %zu\n", S->gc_stack_idx);
+  // new_pair(S, new_number(S, 000), new_number(S, 111));
+  // Value *v1 = state_pop(S);
+  // puts(value_to_string(S, v1));
+  // printf("size: %zu\n", S->gc_stack_idx);
+  // Value *v2 = state_pop(S);
+  // puts(value_to_string(S, v2));
+  // printf("size: %zu\n", S->gc_stack_idx);
+  // Value *v3 = state_pop(S);
+  // puts(value_to_string(S, v3));
+  // printf("size: %zu\n", S->gc_stack_idx);
+  // Value *v4 = state_pop(S);
+  // puts(value_to_string(S, v4));
+  // printf("size: %zu\n", S->gc_stack_idx);
+
   state_close(S);
 }
