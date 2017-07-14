@@ -48,9 +48,9 @@ struct Value {
   unsigned char type; /* the value's type */
   unsigned char mark; /* to determine if the value is reachable */
   union {
-    struct { long value;               } num;
-    struct { char *value; size_t len;  } str;
-    struct { Value *head, *tail;       } pair;
+    struct { double value;            } num;
+    struct { char *value; size_t len; } str;
+    struct { Value *head, *tail;      } pair;
   }; /* tagged union of possible types and their contents */
   /* pointer to next value in chunk */
   Value *next;
@@ -71,12 +71,22 @@ static void state_close(State *S);          /* close give state */
 static void state_push(State *S, Value *v); /* push a value in to the stack then add to current chunk */
 Value *state_pop(State *S);                 /* pop a value from the stack */
 
+void error_out(State *S, Value *err);
+void error_str(State *S, const char *fmt, ...);
 
-Value *new_value(State *S, int type);   /* creates then returns a new emtyp value */
-Value *new_nil(State *S);               /* creates then returns a new nil value */
-Value *new_number(State *S, long num);  /* creates then returns a new number */
-Value *new_string(State *S, char *str); /* creates then returns a new string */
-Value *new_pair(State *S);              /* pops top 2 values, creates then returns a pair */
+Value *new_value(State *S, int type);                /* creates then returns a new emtyp value */
+Value *new_nil(State *S);                            /* creates then returns a new nil value */
+Value *new_number(State *S, double num);             /* creates then returns a new number */
+Value *new_string(State *S, char *str);              /* returns a new string or NULL */
+Value *new_stringl(State *S, char *str, size_t len); /* creates then returns a new string */
+Value *new_string(State *S, char *str);
+Value *new_pair(State *S, Value *head, Value *tail); /* creates then returns a pair */
+int value_type(Value *v);
+Value *Value_to_string(State *S, Value *v);
+const char *value_to_stringl(State *S, Value *v, size_t *len);
+const char *value_to_string(State *S, Value *v);
+const char *value_type_str(int type);
+Value *value_check(State *S, Value *v, int type);
 
 static void gc_free(State *S, Value *v); /* set a value to nil */
 static void gc_deinit(State *S);         /* free all the values in all the chunks */
